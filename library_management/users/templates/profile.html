@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container">
+        <h2>Profile</h2>
+        <p>Username: {{ user.username }}</p>
+        <p>Email: {{ user.email }}</p>
+
+        <h3>Books Borrowed</h3>
+        {% if borrowed_books %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Cover Image</th>
+                        <th>Borrow Date</th>
+                        <th>Due Date</th>
+                        <th>Return Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for borrow in borrowed_books %}
+                        <tr>
+                            <td>{{ borrow.book.title }}</td>
+                            <td>{{ borrow.book.author }}</td>
+                            <td>
+                                {% if borrow.book.cover_image %}
+                                    <img src="{{ borrow.book.cover_image.url }}" alt="{{ borrow.book.title }}" style="max-width: 100px;">
+                                {% else %}
+                                    No image
+                                {% endif %}
+                            </td>
+                            <td>{{ borrow.borrow_date }}</td>
+                            <td>{{ borrow.due_date }}</td>
+                            <td>
+                                {% if borrow.return_date %}
+                                    {{ borrow.return_date }}
+                                {% else %}
+                                    Not returned
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6">You have not borrowed any books.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>You have not borrowed any books.</p>
+        {% endif %}
+
+        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+    </div>
+{% endblock %}

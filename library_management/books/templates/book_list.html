@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <h2>Book List</h2>
+
+        <a href="{% url 'book_create' %}" class="btn btn-primary mb-3">Add New Book</a>
+        
+        <!-- Search Form -->
+        <form method="get" action="{% url 'book_list' %}">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="q" value="{{ query }}" placeholder="Search for books...">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </div>
+        </form>
+        
+        <!-- Book List -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Publisher</th>
+                    <th>Year</th>
+                    <th>Genre</th>
+                    <th>Quantity</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in books %}
+                <tr>
+                    <td>
+                        {% if book.cover_image %}
+                            <img src="{{ book.cover_image.url }}" alt="{{ book.title }}" style="width: 100px; height: auto;">
+                        {% else %}
+                            <img src="{% static 'images/placeholder.png' %}" alt="Placeholder" style="width: 100px; height: auto;">
+                        {% endif %}
+                    </td>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.publisher }}</td>
+                    <td>{{ book.year }}</td>
+                    <td>{{ book.genre }}</td>
+                    <td>{{ book.quantity }}</td>
+                    <td>
+                        <a href="{% url 'book_detail' book.pk %}" class="btn btn-info btn-sm">View</a>
+                        <a href="{% url 'book_update' book.pk %}" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="{% url 'book_delete' book.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                        {% if user.is_authenticated and book.quantity > 0 %}
+                            <a href="{% url 'borrow_book' book.pk %}" class="btn btn-success btn-sm">Borrow</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8">No books available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
